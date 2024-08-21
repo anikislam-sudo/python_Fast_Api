@@ -1,6 +1,12 @@
 from fastapi import FastAPI
-app=FastAPI()
+from app.controllers import router
 
-@app.get('/')
-async def root():
-    return {'message':'hello world!'}
+app = FastAPI()
+
+app.include_router(router)
+
+@app.on_event("startup")
+async def startup_event():
+    from app.models import Base
+    from app.databases import engine
+    Base.metadata.create_all(bind=engine)
