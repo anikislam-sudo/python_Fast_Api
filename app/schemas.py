@@ -1,8 +1,8 @@
+# app/schemas.py
 from pydantic import BaseModel
-from typing  import Optional
+from typing import Optional
 
-
-class CourseBase (BaseModel):
+class CourseBase(BaseModel):
     title: str
     description: str
     instructor: str
@@ -11,22 +11,23 @@ class CourseBase (BaseModel):
 
 class CourseCreate(CourseBase):
     pass
-class Course(CourseBase):
-    id:int
-   
-class Config:
-    orm_mode=True
 
-class EnrollmentBase (BaseModel):
-    student_name:str
-    course_id:int
-    enrollment_date:str
+class Course(CourseBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class EnrollmentBase(BaseModel):
+    student_name: str
+    course_id: int
+    enrollment_date: str
 
 class EnrollmentCreate(EnrollmentBase):
-    pass 
+    pass
 
-class Enrollment (EnrollmentBase):
-    id:int
+class Enrollment(EnrollmentBase):
+    id: int
 
-class Config:
-    orm_mode=True    
+    class Config:
+        orm_mode = True
