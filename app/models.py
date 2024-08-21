@@ -1,9 +1,9 @@
 from sqlalchemy import Column,Integer,Float,String,DATE
 from databases import Base
 
-class User(Base):
+class Course(Base):
      __tablename__ = 'courses'  
-     
+
 id = Column(Integer, primary_key=True, index=True)
 title = Column(String, index=True)
 description = Column(String)
@@ -17,4 +17,4 @@ class Enrollment(Base):
     id = Column(Integer, primary_key=True, index=True)
     student_name = Column(String)
     course_id = Column(Integer)
-    enrollment_date = Column(Date)
+    enrollment_date = Column(DATE)
