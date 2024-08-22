@@ -1,6 +1,8 @@
-# app/schemas.py
+
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date
+
 
 class CourseBase(BaseModel):
     title: str
@@ -21,7 +23,7 @@ class Course(CourseBase):
 class EnrollmentBase(BaseModel):
     student_name: str
     course_id: int
-    enrollment_date: str
+    enrollment_date: date
 
 class EnrollmentCreate(EnrollmentBase):
     pass

@@ -1,5 +1,5 @@
-# app/services.py
 from sqlalchemy.orm import Session
+from datetime import datetime
 from .models import Course, Enrollment
 
 class CourseService:
@@ -33,7 +33,9 @@ class EnrollmentService:
     def __init__(self, db: Session):
         self.db = db
 
-    def enroll_student(self, student_name: str, course_id: int, enrollment_date: str):
+    def enroll_student(self, student_name: str, course_id: int):
+        # Automatically set the enrollment date to the current date
+        enrollment_date = datetime.utcnow()
         db_enrollment = Enrollment(student_name=student_name, course_id=course_id, enrollment_date=enrollment_date)
         self.db.add(db_enrollment)
         self.db.commit()
@@ -41,7 +43,15 @@ class EnrollmentService:
         return db_enrollment
 
     def validate_enrollment(self, student_name: str, course_id: int):
-          course = self.db.query(Course).filter(Course.id == course_id).first()
-          if not course:
+        # Check if the course exists
+        course = self.db.query(Course).filter(Course.id == course_id).first()
+        if not course:
             return False
-          return True
+        # Check if the student is already enrolled in the course
+        existing_enrollment = self.db.query(Enrollment).filter(
+            Enrollment.student_name == student_name,
+            Enrollment.course_id == course_id
+        ).first()
+        if existing_enrollment:
+            return False
+        return True

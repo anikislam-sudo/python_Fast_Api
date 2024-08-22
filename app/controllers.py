@@ -1,4 +1,3 @@
-# app/controllers.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from .schemas import Course, CourseCreate, Enrollment, EnrollmentCreate
@@ -13,6 +12,9 @@ def get_db():
         yield db
     finally:
         db.close()
+
+def get_enrollment_service(db: Session = Depends(get_db)):
+    return EnrollmentService(db)
 
 @router.get("/courses", response_model=list[Course])
 def read_courses(db: Session = Depends(get_db)):
@@ -39,12 +41,13 @@ def read_course(course_id: int, db: Session = Depends(get_db)):
     return course
 
 @router.post("/enrollments", response_model=Enrollment)
-def enroll_student(enrollment: EnrollmentCreate, db: Session = Depends(get_db)):
-    service = EnrollmentService(db)
+def enroll_student(enrollment: EnrollmentCreate, service: EnrollmentService = Depends(get_enrollment_service)):
+    # Pass both `student_name` and `course_id` to `validate_enrollment`
     if not service.validate_enrollment(enrollment.student_name, enrollment.course_id):
-        raise HTTPException(status_code=400, detail="Invalid enrollment")
+        raise HTTPException(status_code=400, detail="Invalid enrollment or student already enrolled")
+    
+    # Proceed with enrollment
     return service.enroll_student(
-        student_name=enrollment.student_name,
-        course_id=enrollment.course_id,
-        enrollment_date=enrollment.enrollment_date
+        student_name=enrollment.student_name, 
+        course_id=enrollment.course_id
     )

@@ -1,4 +1,4 @@
-# main.py
+
 from fastapi import FastAPI
 from app.controllers import router
 
